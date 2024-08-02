@@ -1,0 +1,40 @@
+# Node.js
+logs
+dist
+node_modules
+
+# Log files
+*.logs
+
+# Dependency directories
+/coverage
+/dist
+/doc
+/docs
+/lib
+/node_modules
+/public
+/tmp
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# dotENV environment variable files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# .idea
+.idea/
+
+# VSCode
+.vscode/
+
