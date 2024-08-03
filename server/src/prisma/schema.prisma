@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MovieStatus {
+  POPULAR
+  RECOMENDED
+  NOW_PLAYING
+  TOP_RATED
+}
+
+enum UserStatus {
+  ACTIVE
+  UNACTIVE
+}
+
+enum MembershipType {
+  BASIC    @map("Basic")
+  PREMIUM  @map("Premium")
+  PLATINUM @map("Platinum")
+}
+
+model User {
+  id         Int         @id @default(autoincrement()) @map("id")
+  username   String
+  email      String      @unique
+  password   String
+  status     UserStatus  @default(ACTIVE) @map("status")
+  membership Membership?
+  custId     String?     @unique @map("cust_id")
+  createdAt  DateTime    @default(now())
+
+  @@index([id, username, email, status, custId])
+  @@map("users")
+}
+
+model Membership {
+  id               String         @id @unique @default(uuid()) @map("id")
+  type             MembershipType @map("type")
+  accessDailyLimit Int            @map("access_daily_limit")
+  resetDailyLimit  DateTime       @default(now()) @map("reset_daily_limit")
+  expireAt         DateTime       @map("expire_at")
+  user             User?          @relation(fields: [userId], references: [id])
+  userId           Int?           @unique @map("user_id")
+
+  @@index([id, type, userId])
+  @@map("memberships")
+}
+
+model Genre {
+  id     String  @id @unique @default(uuid()) @map("id")
+  name   String  @unique @map("name") @db.VarChar(100)
+  movies Movie[]
+
+  @@index([id, name])
+  @@map("genres")
+}
+
+model Movie {
+  id          String      @id @unique @default(uuid()) @map("id")
+  title       String
+  description String?
+  genres      Genre[]
+  posterUrl   String      @map("poster_url")
+  videoUrl    String      @map("video_url")
+  rate        Float?
+  year        String
+  movieStatus MovieStatus @default(RECOMENDED) @map("movie_status")
+  uploadDate  DateTime    @default(now()) @map("upload_date")
+
+  @@index([id, title, rate, year, movieStatus])
+  @@map("movies")
+}
