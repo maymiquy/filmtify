@@ -1,0 +1,21 @@
+{
+  "name": "filmtify",
+  "version": "1.0.0",
+  "description": "project root directory",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:check": "eslint . --ext .ts --ext .tsx",
+    "lint:fix": "npm run lint:check --fix",
+    "format:check": "prettier --check './**/src/**/*.{js,ts,jsx,tsx}'",
+    "format:fix": "prettier --write './**/src/**/*.{js,ts,jsx,tsx}'"
+  },
+  "author": "maymiquy",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^8.20.0",
+    "husky": "^9.1.4",
+    "prettier": "^3.3.3"
+  }
+}
