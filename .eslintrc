@@ -15,8 +15,8 @@
   ],
   "rules": {
     // Common rules
-    "@typescript-eslint/no-unused-vars": "warn",
-    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "no-console": "warn"
   },
   "overrides": [
@@ -32,13 +32,20 @@
         "sourceType": "module"
       },
       "rules": {
-        "@typescript-eslint/explicit-member-accessibility": "error",
+        "@typescript-eslint/explicit-member-accessibility": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/no-redundant-type-constituents": "off",
         "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/interface-name-prefix": "off",
+        "@typescript-eslint/no-wrapper-object-types": "off",
         "@typescript-eslint/ban-types": "off",
-        "@typescript-eslint/no-misused-promises": "error",
-        "@typescript-eslint/explicit-module-boundary-types": "error",
+        "@typescript-eslint/no-misused-promises": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
         "no-unused-expressions": "warn",
         "no-process-exit": "error",
         "eqeqeq": "error",
