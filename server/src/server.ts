@@ -1,23 +1,56 @@
-import express from 'express';
+import express, { Application, Router } from 'express';
 import morgan from 'morgan';
 import { config } from 'dotenv';
 config();
 
-import { NODE_ENV, PORT } from '@/config';
-import { logger } from '@/utils/logger';
-import routes from '@/routes';
+import { LOG_FORMAT, NODE_ENV, PORT } from '@/config';
+import { logger, stream } from '@/utils/logger';
+import AuthRoute from './routes/auth.route';
 
-const server = express();
+interface Routes {
+  path?: string;
+  router: Router;
+}
 
-server.use(express.json());
-server.use(express.urlencoded({ extended: true }));
-server.use(morgan('dev'));
+class Server {
+  public server: Application;
+  public env: string;
+  public port: number;
 
-server.use('/api', routes);
+  constructor(routes: Routes[]) {
+    this.server = express();
+    this.env = NODE_ENV;
+    this.port = parseInt(PORT);
 
-server.listen(PORT, () => {
-  logger.info(`=================================`);
-  logger.info(`======= ENV: ${NODE_ENV} =======`);
-  logger.info(`🚀 App listening on the port ${PORT}`);
-  logger.info(`=================================`);
-});
+    this.initializeMiddlewares();
+    this.initializeRoutes(routes);
+  }
+
+  public listen() {
+    this.server.listen(this.port, () => {
+      logger.info(`=================================`);
+      logger.info(`======= ENV: ${this.env} =======`);
+      logger.info(`🚀 App listening on the port ${this.port}`);
+      logger.info(`=================================`);
+    });
+  }
+
+  public getServer() {
+    return this.server;
+  }
+
+  private initializeMiddlewares() {
+    this.server.use(express.json());
+    this.server.use(express.urlencoded({ extended: true }));
+    this.server.use(morgan(LOG_FORMAT, { stream }));
+  }
+
+  private initializeRoutes(routes: Routes[]) {
+    routes.forEach(route => {
+      this.server.use('/api', route.router);
+    });
+  }
+}
+
+const server = new Server([new AuthRoute()]);
+server.listen();
