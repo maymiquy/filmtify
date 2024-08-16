@@ -1,11 +1,13 @@
 import express, { Application, Router } from 'express';
 import morgan from 'morgan';
 import { config } from 'dotenv';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 config();
 
 import { LOG_FORMAT, NODE_ENV, PORT } from '@/config';
 import { logger, stream } from '@/utils/logger';
-import AuthRoute from './routes/auth.route';
+import AuthRoute from '@/routes/auth.route';
 
 interface Routes {
   path?: string;
@@ -43,6 +45,8 @@ class Server {
     this.server.use(express.json());
     this.server.use(express.urlencoded({ extended: true }));
     this.server.use(morgan(LOG_FORMAT, { stream }));
+    this.server.use(cors());
+    this.server.use(cookieParser());
   }
 
   private initializeRoutes(routes: Routes[]) {
