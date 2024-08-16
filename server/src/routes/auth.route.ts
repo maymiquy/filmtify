@@ -1,5 +1,6 @@
 import AuthController from '@/controllers/auth.controller';
 import { CreateLoginDto } from '@/dto/login.dto';
+import { CreateRegisterDto } from '@/dto/register.dto';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import { Router } from 'express';
 
@@ -16,6 +17,12 @@ class AuthRoute {
       '/login',
       validationMiddleware(CreateLoginDto, 'body'),
       this.authController.login
+    );
+
+    this.router.post(
+      '/register',
+      validationMiddleware(CreateRegisterDto, 'body'),
+      this.authController.register
     );
   }
 }
