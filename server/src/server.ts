@@ -8,6 +8,7 @@ config();
 import { LOG_FORMAT, NODE_ENV, PORT } from '@/config';
 import { logger, stream } from '@/utils/logger';
 import AuthRoute from '@/routes/auth.route';
+import errorMiddleware from './middlewares/error.middleware';
 
 interface Routes {
   path?: string;
@@ -26,6 +27,7 @@ class Server {
 
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
+    this.initializeErrorHandling();
   }
 
   public listen() {
@@ -53,6 +55,10 @@ class Server {
     routes.forEach(route => {
       this.server.use('/api', route.router);
     });
+  }
+
+  private initializeErrorHandling() {
+    this.server.use(errorMiddleware);
   }
 }
 

@@ -7,6 +7,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import { CreateOauthDto } from '@/dto/oauth.dto';
+import { HttpException } from '@/exceptions/http-exception';
 
 class AuthService {
   public prisma = new PrismaClient();
@@ -18,7 +19,7 @@ class AuthService {
       });
 
       if (existingUser) {
-        throw new Error('Email already exists');
+        throw new HttpException(401, 'Email already exists');
       }
 
       const hashedPassword = await bcrypt.hash(registerDto.password, 10);
@@ -55,7 +56,7 @@ class AuthService {
         where: { email: loginDto.email }
       });
       if (!user) {
-        throw new Error('Invalid email or password');
+        throw new HttpException(401, 'Invalid credentials');
       }
 
       const passwordIsValid = await bcrypt.compare(
@@ -64,7 +65,7 @@ class AuthService {
       );
 
       if (!passwordIsValid) {
-        throw new Error('Invalid email or password');
+        throw new HttpException(401, 'Invalid credentials');
       }
 
       const token = jwt.sign({ email: user.email }, JWT_SECRET_KEY, {
@@ -93,7 +94,7 @@ class AuthService {
       );
 
       if (res.status !== 200) {
-        throw new Error('Failed to fetch user data');
+        throw new HttpException(401, 'Unauthorized');
       }
 
       const { email, name } = await res.data;
