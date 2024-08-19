@@ -1,5 +1,6 @@
 import AuthController from '@/controllers/auth.controller';
 import { CreateLoginDto } from '@/dto/login.dto';
+import { CreateOauthDto } from '@/dto/oauth.dto';
 import { CreateRegisterDto } from '@/dto/register.dto';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import { Router } from 'express';
@@ -23,6 +24,12 @@ class AuthRoute {
       '/register',
       validationMiddleware(CreateRegisterDto, 'body'),
       this.authController.register
+    );
+
+    this.router.post(
+      '/oauth/google',
+      validationMiddleware(CreateOauthDto, 'body'),
+      this.authController.loginGoogle
     );
   }
 }
