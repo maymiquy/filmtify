@@ -124,13 +124,6 @@ class AuthService {
             custId: stripeCust.id
           }
         });
-
-        const token = jwt.sign({ email: email }, JWT_SECRET_KEY, {
-          expiresIn: 36000
-        });
-        const cookie = `Authorization=${token}; HttpOnly; Max-Age=${360000}`;
-
-        return { cookie, user };
       }
 
       const token = jwt.sign({ email: email }, JWT_SECRET_KEY, {
