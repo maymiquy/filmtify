@@ -68,7 +68,7 @@ Response Body (Failed) :
 
 ### Google Login
 
-Endpoint : `POST /api/google/login`
+Endpoint : `POST /api/oauht/google`
 
 Request Headers :
 `Authorization: Bearer <access_token>`
@@ -95,7 +95,7 @@ Response Body (Failed) :
 
 ### Facebook Login
 
-Endpoint : `POST /api/facebook/login`
+Endpoint : `POST /api/oauth/fb`
 
 Request Headers :
 `Authorization: Bearer <access_token>`
