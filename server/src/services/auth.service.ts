@@ -24,7 +24,7 @@ class AuthService {
 
       const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-      const stripeCust = await stripe.customers.create(
+      const generateStripeCust = await stripe.customers.create(
         {
           email: registerDto.email
         },
@@ -38,13 +38,13 @@ class AuthService {
           email: registerDto.email,
           username: registerDto.username,
           password: hashedPassword,
-          custId: stripeCust.id
+          custId: generateStripeCust.id
         }
       });
 
       return user;
     } catch (error) {
-      throw new Error(error.message);
+      throw new HttpException(500, error.message);
     }
   }
 
@@ -75,7 +75,7 @@ class AuthService {
 
       return { cookie, user };
     } catch (error) {
-      throw new Error(error.message);
+      throw new HttpException(500, error.message);
     }
   }
 
@@ -98,7 +98,6 @@ class AuthService {
       }
 
       const { email, name } = await res.data;
-
       let user = await this.prisma.user.findUnique({
         where: {
           email
@@ -108,7 +107,7 @@ class AuthService {
       if (!user) {
         const hashedPassword = await bcrypt.hash(email, 10);
 
-        const stripeCust = await stripe.customers.create(
+        const generateStripeCust = await stripe.customers.create(
           {
             email
           },
@@ -122,7 +121,7 @@ class AuthService {
             username: name,
             email: email,
             password: hashedPassword,
-            custId: stripeCust.id
+            custId: generateStripeCust.id
           }
         });
       }
@@ -134,7 +133,65 @@ class AuthService {
 
       return { cookie, user };
     } catch (error) {
-      throw new Error(error.message);
+      throw new HttpException(500, error.message);
+    }
+  }
+
+  public async oauthFacebook(
+    oauthDto: CreateOauthDto
+  ): Promise<{ cookie: string; user: User }> {
+    try {
+      const { accessToken } = oauthDto;
+      const res = await axios.get(
+        `https://graph.facebook.com/me?access_token=${accessToken}&fields=id,name,email`,
+        {
+          headers: {
+            Authorization: `Baerer ${accessToken}`
+          }
+        }
+      );
+
+      if (res.status !== 200) {
+        throw new HttpException(401, 'Unauthorize');
+      }
+
+      const { email, name } = await res.data;
+      let user = await this.prisma.user.findUnique({
+        where: {
+          email
+        }
+      });
+
+      if (!user) {
+        const hashedPassword = await bcrypt.hash(email, 10);
+
+        const generateStripeCust = await stripe.customers.create(
+          {
+            email
+          },
+          {
+            apiKey: STRIPE_SECRET_KEY
+          }
+        );
+
+        user = await this.prisma.user.create({
+          data: {
+            username: name,
+            email: email,
+            password: hashedPassword,
+            custId: generateStripeCust.id
+          }
+        });
+      }
+
+      const token = jwt.sign({ email: email }, JWT_SECRET_KEY, {
+        expiresIn: 36000
+      });
+      const cookie = `Authorization=${token}; HttpOnly; Max-Age=${360000}`;
+
+      return { cookie, user };
+    } catch (error) {
+      throw new HttpException(500, error.message);
     }
   }
 }

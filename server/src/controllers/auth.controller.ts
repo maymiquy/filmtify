@@ -67,6 +67,25 @@ class AuthController {
       next(error);
     }
   };
+
+  public loginFacebook = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const oauthDto: CreateOauthDto = req.body;
+      const { cookie, user } = await this.authService.oauthFacebook(oauthDto);
+
+      res.setHeader('Set-Cookie', [cookie]);
+      res.status(200).json({
+        data: user,
+        message: 'Successfully Login'
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

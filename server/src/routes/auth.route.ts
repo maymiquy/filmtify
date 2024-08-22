@@ -31,6 +31,12 @@ class AuthRoute {
       validationMiddleware(CreateOauthDto, 'body'),
       this.authController.loginGoogle
     );
+
+    this.router.post(
+      '/oauth/facebook',
+      validationMiddleware(CreateOauthDto, 'body'),
+      this.authController.loginFacebook
+    );
   }
 }
 
